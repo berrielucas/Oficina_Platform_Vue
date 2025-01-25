@@ -1,61 +1,71 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'app',
-      component: () => import('../views/AppView.vue'),
+      path: "/",
+      name: "app",
+      component: () => import("../views/AppView.vue"),
       children: [
         {
-          path: '',
-          name: 'home',
-          component: () => import('../views/HomeView.vue'),
+          path: "",
+          name: "home",
+          component: () => import("../views/HomeView.vue"),
           meta: {
-            title: "Home"
+            title: "Home",
           },
         },
         {
-          path: 'ordens',
-          name: 'ordens',
-          component: () => import('../views/OrdensView.vue'),
+          path: "ordens",
+          name: "ordens",
+          component: () => import("../views/OrdensView.vue"),
           meta: {
-            title: "Ordens de Serviço"
+            title: "Ordens de Serviço",
           },
         },
         {
-          path: 'servicos',
-          name: 'servicos',
-          component: () => import('../views/HomeView.vue'),
+          path: "servicos",
+          name: "servicos",
+          component: () => import("../views/HomeView.vue"),
           meta: {
-            title: "Serviços"
+            title: "Serviços",
           },
         },
         {
-          path: 'automoveis',
-          name: 'automoveis',
-          component: () => import('../views/HomeView.vue'),
+          path: "automoveis",
+          name: "automoveis",
+          component: () => import("../views/HomeView.vue"),
           meta: {
-            title: "Automóveis"
+            title: "Automóveis",
           },
         },
         {
-          path: 'clientes',
-          name: 'clientes',
-          component: () => import('../views/HomeView.vue'),
+          path: "clientes",
           meta: {
-            title: "Clientes"
+            title: "Clientes",
           },
+          children: [
+            {
+              path: "",
+              name: "clientes",
+              component: () => import("../views/ClienteView.vue"),
+            },
+            {
+              path: ":idClient",
+              name: "clientId",
+              component: () => import("../components/FormCliente.vue"),
+            },
+          ],
         },
-      ]
+      ],
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      path: "/login",
+      name: "login",
+      component: () => import("../views/LoginView.vue"),
     },
   ],
-})
+});
 
-export default router
+export default router;
