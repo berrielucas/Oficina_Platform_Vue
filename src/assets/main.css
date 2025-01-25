@@ -1,0 +1,24 @@
+@import './base.css';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+html::-webkit-scrollbar {
+  width: 7px;
+}
+
+html::-webkit-scrollbar-track {
+  background-color: #cccccc;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: #707070;
+}
+
+html {
+  max-height: 100dvh;
+}
