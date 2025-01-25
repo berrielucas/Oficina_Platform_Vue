@@ -6,11 +6,11 @@ const authStore = useAuthStore();
 
 const router = useRouter();
 
-onBeforeMount(()=>{
+onBeforeMount(() => {
   if (!authStore.auth) {
-    router.push("/login")
+    router.push("/login");
   }
-})
+});
 
 /**
  * App Bar
@@ -35,8 +35,7 @@ const enterSearch = () => {
     chipSearchToggle.value = true;
     searchToggle.value = false;
   }
-}
-
+};
 
 /**
  * Navigation
@@ -49,9 +48,9 @@ const groupItens = ref([
       {
         title: "Ordens de Serviço",
         path: "ordens",
-        icon: "mdi-file-document-check"
+        icon: "mdi-file-document-check",
       },
-    ]
+    ],
   },
   {
     title: "Cadastros",
@@ -60,42 +59,54 @@ const groupItens = ref([
       {
         title: "Automóveis",
         path: "automoveis",
-        icon: "mdi-car"
+        icon: "mdi-car",
       },
       {
         title: "Clientes",
         path: "clientes",
-        icon: "mdi-account-group"
+        icon: "mdi-account-group",
       },
       {
         title: "Serviços",
         path: "servicos",
-        icon: "mdi-tools"
+        icon: "mdi-tools",
       },
-    ]
+    ],
   },
 ]);
 
-const groupOpened = ref(["MAIN", "CAD"])
-
-
+const groupOpened = ref(["MAIN", "CAD"]);
 </script>
 
 <template>
   <v-app theme="dark">
     <v-navigation-drawer permanent color="transparent" width="230">
       <v-list :opened="groupOpened">
-
-        <v-list-group v-for="group, index in groupItens" :key="index" :value="group.name">
+        <v-list-group
+          v-for="(group, index) in groupItens"
+          :key="index"
+          :value="group.name"
+        >
           <template v-slot:activator="{ props }">
-            <v-list-item density="compact" active color="#da9c01" v-bind="props">
+            <v-list-item
+              density="compact"
+              active
+              color="#da9c01"
+              v-bind="props"
+            >
               <span class="nav-section">{{ group.title }}</span>
             </v-list-item>
           </template>
 
-          <v-list-item v-for="item, index in group.children" :key="index" :prepend-icon="item.icon" :title="item.title" @click="$router.push({name: item.path})" density="comfortable"></v-list-item>
+          <v-list-item
+            v-for="(item, index) in group.children"
+            :key="index"
+            :prepend-icon="item.icon"
+            :title="item.title"
+            @click="$router.push({ name: item.path })"
+            density="comfortable"
+          ></v-list-item>
         </v-list-group>
-
       </v-list>
     </v-navigation-drawer>
 
@@ -105,8 +116,22 @@ const groupOpened = ref(["MAIN", "CAD"])
       </v-app-bar-title>
       <v-spacer></v-spacer>
       <template v-slot:append>
-        <div :class="searchToggle ? (appBarExtendToggle ? 'border-s border-b' : '') : ''" class="h-100 d-flex rounded-xl search-section" style="align-items: center; justify-content: center">
-          <input v-model="searchText" @click="activeSearch" @focusout="deactiveSearch" :class="searchToggle ? 'search-active' : ''" class="search-input ml-5" type="text" placeholder="Bucar aqui..." />
+        <div
+          :class="
+            searchToggle ? (appBarExtendToggle ? 'border-s border-b' : '') : ''
+          "
+          class="h-100 d-flex rounded-xl search-section"
+          style="align-items: center; justify-content: center"
+        >
+          <input
+            v-model="searchText"
+            @click="activeSearch"
+            @focusout="deactiveSearch"
+            :class="searchToggle ? 'search-active' : ''"
+            class="search-input ml-5"
+            type="text"
+            placeholder="Bucar aqui..."
+          />
           <!-- <v-chip v-if="chipSearchToggle" class="ml-auto mr-0" closable close-icon="mdi-close">{{ chipSearchText }}</v-chip> -->
           <v-icon @click="" class="mr-3 ml-4">mdi-magnify</v-icon>
         </div>
@@ -118,7 +143,12 @@ const groupOpened = ref(["MAIN", "CAD"])
           <p>teste</p>
           <v-spacer></v-spacer>
           <v-chip-group column multiple>
-            <v-chip density="comfortable" text="Arovadas" variant="outlined" filter></v-chip>
+            <v-chip
+              density="comfortable"
+              text="Arovadas"
+              variant="outlined"
+              filter
+            ></v-chip>
           </v-chip-group>
         </div>
       </template>
@@ -127,7 +157,6 @@ const groupOpened = ref(["MAIN", "CAD"])
     <v-main>
       <RouterView />
     </v-main>
-
   </v-app>
 </template>
 

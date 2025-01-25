@@ -23,3 +23,7 @@
   --color-heading: var(--vt-c-text-dark-1);
   --color-text: var(--vt-c-text-dark-2);
 }
+
+:root {
+  --primary-color: #da9c01;
+}
