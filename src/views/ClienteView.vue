@@ -30,7 +30,19 @@ const config = reactive({
 
 <template>
   <div class="pa-5">
-    <FormCliente :edit="false" />
+    <div class="d-flex align-center">
+        <v-spacer></v-spacer>
+        <v-btn
+            @click="store.findAll()"
+            icon="mdi-sync"
+            density="comfortable"
+            class="mx-3"
+            size="37"
+            color="white"
+            variant="tonal"
+          ></v-btn>
+        <FormCliente :edit="false" />
+    </div>
     <v-data-table
         v-model:page="page"
         :headers="config.headers"
@@ -41,6 +53,7 @@ const config = reactive({
         :hover="store.list.length > 0"
         density="comfortable"
         class="mt-4 border w-100"
+        :loading="store.load"
       >
         <template v-slot:no-data>
           <div class="py-10">
@@ -49,7 +62,7 @@ const config = reactive({
         </template>
 
         <template v-slot:loading>
-          <v-skeleton-loader type="table-row-divider@3"></v-skeleton-loader>
+          <v-skeleton-loader style="background-color: transparent;" class="py-3" type="table-row@3"></v-skeleton-loader>
         </template>
 
         <template v-slot:item.action="{ item }">
@@ -66,7 +79,7 @@ const config = reactive({
         </template>
 
         <template v-slot:bottom>
-          <div class="pb-1 pt-2" v-if="store.list.length > itemsPerPage">
+          <div class="pb-1 pt-2" v-if="store.list.length > itemsPerPage && !store.load">
             <v-pagination
               density="comfortable"
               style="max-width: 700px; margin-inline: auto"

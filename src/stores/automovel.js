@@ -11,14 +11,19 @@ export const useAutomovelStore = defineStore(
 
     const list = ref([]);
 
+    const load = ref(false);
+
     const findAll = () => {
+      load.value = true;
       axios
         .get(`/${nameRouter}`)
         .then((response) => {
           list.value = response.data;
+          load.value = false;
         })
         .catch((error) => {
           console.error(error);
+          load.value = false;
         });
     };
 
@@ -68,7 +73,7 @@ export const useAutomovelStore = defineStore(
         });
     };
 
-    return { list, findAll, findOne, create, update, remove };
+    return { list, load, findAll, findOne, create, update, remove };
   },
   { persist: true },
 );

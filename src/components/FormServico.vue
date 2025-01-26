@@ -46,10 +46,10 @@ const editar = () => {
   router.push({ name: `${nameRouter}Id`, params: { id: props.id } });
   const item = store.list.find((i) => i[refId] === props.id);
   if (item) {
-    dataObject = {
+    dataObject = reactive({
       ...dataObject,
       ...item
-    }
+    })
     // Personalização
     displayedMoney.value = `R$ `+`${dataObject.preco}`.replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }

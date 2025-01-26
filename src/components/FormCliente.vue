@@ -1,7 +1,9 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useClientStore } from "@/stores/client";
+import { useGlobalStore } from "@/stores/global";
+const { formatPhone } = useGlobalStore();
 
 const store = useClientStore();
 const route = useRoute();
@@ -31,16 +33,20 @@ let dataObject = reactive({
   endereco: ""
 })
 
+// Personalizados
+const formatTelefone = computed(() => {
+  dataObject.telefone = formatPhone(dataObject.telefone);
+});
 
 // Functions
 const editar = () => {
   router.push({ name: `${nameRouter}Id`, params: { id: props.id } });
   const item = store.list.find((i) => i[refId] === props.id);
   if (item) {
-    dataObject = {
+    dataObject = reactive({
       ...dataObject,
       ...item
-    }
+    })
   }
 };
 
@@ -156,9 +162,11 @@ const rule = ref([
                 <v-text-field
                   placeholder="Telefone *"
                   v-model="dataObject.telefone"
+                  v-model:update="formatTelefone"
                   :rules="rule"
                   density="comfortable"
                   single-line
+                  maxlength="15"
                   class="mb-2"
                 ></v-text-field>
                 <v-textarea

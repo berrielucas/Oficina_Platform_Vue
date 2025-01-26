@@ -13,6 +13,8 @@ export const useGlobalStore = defineStore("global", () => {
     const phone = p.replace(/\D/g, "");
     if (phone.length <= 8) {
       return phone.replace(/(\d{4})(\d{4})/, "$1-$2");
+    } else if (phone.length == 9) {
+      return phone.replace(/(\d{5})(\d{4})/, "$1-$2");
     } else if (phone.length <= 10) {
       return phone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
     } else {
