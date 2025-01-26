@@ -8,6 +8,9 @@ const authStore = useAuthStore();
 import { useClientStore } from "@/stores/client";
 const storeCliente = useClientStore();
 
+import { useAutomovelStore } from "@/stores/automovel";
+const storeAutomovel = useAutomovelStore();
+
 const router = useRouter();
 
 onBeforeMount(() => {
@@ -17,7 +20,8 @@ onBeforeMount(() => {
 });
 
 onMounted(() => {
-  storeCliente.findAll()
+  storeCliente.findAll();
+  storeAutomovel.findAll();
 })
 
 /**
@@ -65,7 +69,7 @@ const groupItens = ref([
     name: "CAD",
     children: [
       {
-        title: "Automóveis",
+        title: "Veículos",
         path: "automoveis",
         icon: "mdi-car",
       },
