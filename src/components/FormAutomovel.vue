@@ -2,8 +2,10 @@
 import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useClientStore } from "@/stores/client";
+import { useAutomovelStore } from "@/stores/automovel";
 
-const store = useClientStore();
+const store = useAutomovelStore();
+const storeCliente = useClientStore();
 const route = useRoute();
 const router = useRouter();
 const dialog = ref(false);
@@ -21,14 +23,15 @@ const props = defineProps({
 
 
 // Configs
-const nameRouter = "clientes";
-const refId = "id_cliente";
+const nameRouter = "automoveis";
+const refId = "id_automovel";
 
 let dataObject = reactive({
-  nome: "",
-  email: "",
-  telefone: "",
-  endereco: ""
+  id_cliente: null,
+  marca: "",
+  modelo: "",
+  ano: "",
+  placa: ""
 })
 
 
@@ -100,7 +103,7 @@ const rule = ref([
         v-if="!props.edit"
         v-bind="activatorProps"
         class="text-none"
-        text="Novo cliente"
+        text="Novo veículo"
         color="#da9c01"
         @click="dialog = true"
         variant="tonal"
@@ -121,7 +124,7 @@ const rule = ref([
     <v-card>
       <v-card-text class="px-3 pb-4 pt-1">
         <v-col cols="12" class="mb-2 pr-1 d-flex align-center">
-          <h3>{{ props.edit ? "Cliente" : "Novo cliente" }}</h3>
+          <h3>{{ props.edit ? "Veículo" : "Novo veículo" }}</h3>
           <v-spacer></v-spacer>
           <v-btn
             class="text-none rounded-lg"
@@ -137,40 +140,49 @@ const rule = ref([
           <v-row dense>
               <!-- Dados do Cliente -->
               <v-col cols="12">
+                <v-autocomplete
+                    v-model="dataObject.id_cliente"
+                    :items="storeCliente.list"
+                    item-title="nome"
+                    item-value="id_cliente"
+                    placeholder="Cliente *"
+                    single-line
+                    class="mb-2"
+                    closable
+                    density="comfortable"
+                ></v-autocomplete>
                 <v-text-field
-                  placeholder="Nome *"
-                  v-model="dataObject.nome"
+                  placeholder="Marca *"
+                  v-model="dataObject.marca"
                   :rules="rule"
                   density="comfortable"
                   single-line
                   class="mb-2"
                 ></v-text-field>
                 <v-text-field
-                  placeholder="Email *"
-                  v-model="dataObject.email"
+                  placeholder="Modelo *"
+                  v-model="dataObject.modelo"
                   :rules="rule"
                   density="comfortable"
                   single-line
                   class="mb-2"
                 ></v-text-field>
                 <v-text-field
-                  placeholder="Telefone *"
-                  v-model="dataObject.telefone"
+                  placeholder="Ano *"
+                  v-model="dataObject.ano"
                   :rules="rule"
                   density="comfortable"
                   single-line
                   class="mb-2"
                 ></v-text-field>
-                <v-textarea
-                  placeholder="Endereço *"
-                  v-model="dataObject.endereco"
+                <v-text-field
+                  placeholder="Placa *"
+                  v-model="dataObject.placa"
                   :rules="rule"
                   density="comfortable"
                   single-line
-                  no-resize
-                  rows="2"
                   class="mb-2"
-                ></v-textarea>
+                ></v-text-field>
               </v-col>
 
               <!-- Salvar -->

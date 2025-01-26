@@ -1,12 +1,15 @@
 <script setup>
-import FormCliente from "@/components/FormCliente.vue";
+import FormAutomovel from "@/components/FormAutomovel.vue";
+
+import { computed, reactive, ref } from "vue";
+import { useAutomovelStore } from "@/stores/automovel";
+const store = useAutomovelStore();
 
 import { useClientStore } from "@/stores/client";
-import { computed, reactive, ref } from "vue";
-const store = useClientStore();
+const storeCliente = useClientStore();
 
 // Config
-const refId = ref("id_cliente");
+const refId = ref("id_automovel");
 
 const page = ref(1);
 const itemsPerPage = ref(10);
@@ -17,11 +20,11 @@ const config = reactive({
   headers: [
     {
       align: "start",
-      key: "nome",
-      title: "Nome",
+      key: "marca",
+      title: "Marca",
     },
-    { title: "Email", key: "email" },
-    { title: "Celular", key: "telefone" },
+    { title: "Modelo", key: "modelo" },
+    { title: "Cliente", key: "cliente" },
     { title: "Ações", key: "action", align: "end", sortable: false },
   ],
 });
@@ -30,7 +33,7 @@ const config = reactive({
 
 <template>
   <div class="pa-5">
-    <FormCliente :edit="false" />
+    <FormAutomovel :edit="false" />
     <v-data-table
         v-model:page="page"
         :headers="config.headers"
@@ -52,8 +55,12 @@ const config = reactive({
           <v-skeleton-loader type="table-row-divider@3"></v-skeleton-loader>
         </template>
 
+        <template v-slot:item.cliente="{ item }">
+          <p>{{ item.cliente.nome || "Cliente não idêntificado" }}</p>
+        </template>
+
         <template v-slot:item.action="{ item }">
-          <FormCliente :edit="true" :id="item[refId]" />
+          <FormAutomovel :edit="true" :id="item[refId]" />
           <v-btn
             @click="store.remove(item[refId])"
             icon="mdi-trash-can"

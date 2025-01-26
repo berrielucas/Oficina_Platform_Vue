@@ -33,12 +33,22 @@ const router = createRouter({
           },
         },
         {
-          path: "automoveis",
-          name: "automoveis",
-          component: () => import("../views/HomeView.vue"),
+          path: "veiculos",
           meta: {
-            title: "Automóveis",
+            title: "Veículos",
           },
+          children: [
+            {
+              path: "",
+              name: "automoveis",
+              component: () => import("../views/AutomovelView.vue"),
+            },
+            {
+              path: ":id",
+              name: "automoveisId",
+              component: () => import("../views/AutomovelView.vue"),
+            },
+          ],
         },
         {
           path: "clientes",
@@ -52,9 +62,9 @@ const router = createRouter({
               component: () => import("../views/ClienteView.vue"),
             },
             {
-              path: ":idClient",
-              name: "clientId",
-              component: () => import("../components/FormCliente.vue"),
+              path: ":id",
+              name: "clientesId",
+              component: () => import("../views/ClienteView.vue"),
             },
           ],
         },

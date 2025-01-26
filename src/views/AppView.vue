@@ -1,8 +1,15 @@
 <script setup>
-import { onBeforeMount, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 import { RouterLink, RouterView, useRouter } from "vue-router";
+
 import { useAuthStore } from "@/stores/auth";
 const authStore = useAuthStore();
+
+import { useClientStore } from "@/stores/client";
+const storeCliente = useClientStore();
+
+import { useAutomovelStore } from "@/stores/automovel";
+const storeAutomovel = useAutomovelStore();
 
 const router = useRouter();
 
@@ -11,6 +18,11 @@ onBeforeMount(() => {
     router.push("/login");
   }
 });
+
+onMounted(() => {
+  storeCliente.findAll();
+  storeAutomovel.findAll();
+})
 
 /**
  * App Bar
@@ -57,7 +69,7 @@ const groupItens = ref([
     name: "CAD",
     children: [
       {
-        title: "Automóveis",
+        title: "Veículos",
         path: "automoveis",
         icon: "mdi-car",
       },
