@@ -26,11 +26,21 @@ const router = createRouter({
         },
         {
           path: "servicos",
-          name: "servicos",
-          component: () => import("../views/HomeView.vue"),
           meta: {
             title: "Serviços",
           },
+          children: [
+            {
+              path: "",
+              name: "servicos",
+              component: () => import("../views/ServicoView.vue")
+            },
+            {
+              path: ":id",
+              name: "servicosId",
+              component: () => import("../views/ServicoView.vue")
+            },
+          ],
         },
         {
           path: "veiculos",

@@ -1,12 +1,14 @@
 <script setup>
-import FormCliente from "@/components/FormCliente.vue";
+import FormServico from "@/components/FormServico.vue";
 
-import { useClientStore } from "@/stores/client";
+import { useGlobalStore } from "@/stores/global";
+import { useServicoStore } from "@/stores/servico";
 import { computed, reactive, ref } from "vue";
-const store = useClientStore();
+const store = useServicoStore();
+const { formatMoeda } = useGlobalStore();
 
 // Config
-const refId = ref("id_cliente");
+const refId = ref("id_servico");
 
 const page = ref(1);
 const itemsPerPage = ref(10);
@@ -17,11 +19,11 @@ const config = reactive({
   headers: [
     {
       align: "start",
-      key: "nome",
-      title: "Nome",
+      key: "descricao",
+      title: "Descrição",
+      "width": "700"
     },
-    { title: "Email", key: "email" },
-    { title: "Celular", key: "telefone" },
+    { title: "Preço", key: "preco" },
     { title: "Ações", key: "action", align: "end", sortable: false },
   ],
 });
@@ -41,7 +43,7 @@ const config = reactive({
             color="white"
             variant="tonal"
           ></v-btn>
-        <FormCliente :edit="false" />
+        <FormServico :edit="false" />
     </div>
     <v-data-table
         v-model:page="page"
@@ -57,7 +59,7 @@ const config = reactive({
       >
         <template v-slot:no-data>
           <div class="py-10">
-            <h3 class="font-weight-medium opacity-80">Nenhum cliente encontrado na base.</h3>
+            <h3 class="font-weight-medium opacity-80">Nenhum serviço encontrado na base.</h3>
           </div>
         </template>
 
@@ -65,8 +67,12 @@ const config = reactive({
           <v-skeleton-loader style="background-color: transparent;" class="py-3" type="table-row@3"></v-skeleton-loader>
         </template>
 
+        <template v-slot:item.preco="{ item }">
+          <p>{{ `R$ `+`${item.preco}`.replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".") }}</p>
+        </template>
+
         <template v-slot:item.action="{ item }">
-          <FormCliente :edit="true" :id="item[refId]" />
+          <FormServico :edit="true" :id="item[refId]" />
           <v-btn
             @click="store.remove(item[refId])"
             icon="mdi-trash-can"

@@ -1,11 +1,11 @@
 <script setup>
 import { computed, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useClientStore } from "@/stores/client";
+import { useServicoStore } from "@/stores/servico";
 import { useGlobalStore } from "@/stores/global";
-const { formatPhone } = useGlobalStore();
 
-const store = useClientStore();
+const { formatMoeda } = useGlobalStore();
+const store = useServicoStore();
 const route = useRoute();
 const router = useRouter();
 const dialog = ref(false);
@@ -23,20 +23,23 @@ const props = defineProps({
 
 
 // Configs
-const nameRouter = "clientes";
-const refId = "id_cliente";
+const nameRouter = "servicos";
+const refId = "id_servico";
 
 let dataObject = reactive({
-  nome: "",
-  email: "",
-  telefone: "",
-  endereco: ""
+  descricao: "",
+  preco: 0.00,
 })
 
 // Personalizados
-const formatTelefone = computed(() => {
-  dataObject.telefone = formatPhone(dataObject.telefone);
+const displayedMoney = ref("R$ 0,00");
+
+const formatMoney = computed(() => {
+  const { preco, display } = formatMoeda(displayedMoney.value);
+  dataObject.preco = preco;
+  displayedMoney.value = display;
 });
+
 
 // Functions
 const editar = () => {
@@ -47,6 +50,8 @@ const editar = () => {
       ...dataObject,
       ...item
     })
+    // Personalização
+    displayedMoney.value = `R$ `+`${dataObject.preco}`.replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 };
 
@@ -65,8 +70,13 @@ const action = () => {
 
 const cancel = () => {
   for (const key in dataObject) {
-    dataObject[key] = "";
+    if (typeof dataObject[key] == "number") {
+      dataObject[key] = 0.00;
+    } else {
+      dataObject[key] = "";
+    }
   }
+  displayedMoney.value = "R$ 0,00";
 };
 
 const close = () => {
@@ -82,12 +92,22 @@ const valid = (obj) => {
     if (!obj[key]) {
       return false;
     }
+    // Personalizado
+    if (parseInt(obj[key]) === 0) {
+      return false;
+    }
   }
   return true;
 }
 
 const rule = ref([
   (value) => {
+    // Personalizado
+    if (parseInt(value.replace("R$ ", "").replace(",", ".")) === 0) {
+      return "Valor mínimmo R$ 1,00"
+    } else
+
+    // Padrão
     if (value) return true;
     return "Campo obrigatório";
   },
@@ -106,8 +126,8 @@ const rule = ref([
         v-if="!props.edit"
         v-bind="activatorProps"
         class="text-none"
-        text="Novo cliente"
-        color="#da9c01"
+        text="Novo serviço"
+        color="var(--primary-color)"
         @click="dialog = true"
         variant="tonal"
         style="z-index: 150"
@@ -127,7 +147,7 @@ const rule = ref([
     <v-card>
       <v-card-text class="px-3 pb-4 pt-1">
         <v-col cols="12" class="mb-2 pr-1 d-flex align-center">
-          <h3>{{ props.edit ? "Cliente" : "Novo cliente" }}</h3>
+          <h3>{{ props.edit ? "Serviço" : "Novo serviço" }}</h3>
           <v-spacer></v-spacer>
           <v-btn
             class="text-none rounded-lg"
@@ -144,41 +164,23 @@ const rule = ref([
               <!-- Dados do Cliente -->
               <v-col cols="12">
                 <v-text-field
-                  placeholder="Nome *"
-                  v-model="dataObject.nome"
+                  placeholder="Descricao *"
+                  v-model="dataObject.descricao"
                   :rules="rule"
                   density="comfortable"
                   single-line
                   class="mb-2"
                 ></v-text-field>
                 <v-text-field
-                  placeholder="Email *"
-                  v-model="dataObject.email"
+                  label="Preço *"
+                  v-model="displayedMoney"
+                  v-model:update="formatMoney"
                   :rules="rule"
                   density="comfortable"
                   single-line
                   class="mb-2"
+                  maxlength="16"
                 ></v-text-field>
-                <v-text-field
-                  placeholder="Telefone *"
-                  v-model="dataObject.telefone"
-                  v-model:update="formatTelefone"
-                  :rules="rule"
-                  density="comfortable"
-                  single-line
-                  maxlength="15"
-                  class="mb-2"
-                ></v-text-field>
-                <v-textarea
-                  placeholder="Endereço *"
-                  v-model="dataObject.endereco"
-                  :rules="rule"
-                  density="comfortable"
-                  single-line
-                  no-resize
-                  rows="2"
-                  class="mb-2"
-                ></v-textarea>
               </v-col>
 
               <!-- Salvar -->
@@ -187,7 +189,7 @@ const rule = ref([
                 <v-btn
                   class="text-none"
                   :text="route.params.id ? 'Salvar' : 'Cadastrar'"
-                  color="#da9c01"
+                  color="var(--primary-color)"
                   @click="action"
                   type="submit"
                   variant="tonal"

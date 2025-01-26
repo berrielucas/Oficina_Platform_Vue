@@ -2,12 +2,12 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import axios from "axios";
 
-export const useAutomovelStore = defineStore(
-  "automovel",
+export const useServicoStore = defineStore(
+  "servico",
   () => {
     // Config
-    const nameRouter = "automoveis";
-    const refId = "id_automovel";
+    const nameRouter = "servicos";
+    const refId = "id_servico";
 
     const list = ref([]);
 

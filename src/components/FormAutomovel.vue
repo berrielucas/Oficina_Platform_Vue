@@ -40,10 +40,10 @@ const editar = () => {
   router.push({ name: `${nameRouter}Id`, params: { id: props.id } });
   const item = store.list.find((i) => i[refId] === props.id);
   if (item) {
-    dataObject = {
+    dataObject = reactive({
       ...dataObject,
       ...item
-    }
+    })
   }
 };
 
@@ -62,7 +62,11 @@ const action = () => {
 
 const cancel = () => {
   for (const key in dataObject) {
-    dataObject[key] = "";
+    if (typeof dataObject[key] == "string") {
+      dataObject[key] = "";
+    } else {
+      dataObject[key] = null;
+    }
   }
 };
 
