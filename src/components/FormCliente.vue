@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useClientStore } from "@/stores/client";
 
@@ -14,57 +14,71 @@ const props = defineProps({
     required: false,
   },
   id: {
-    type: String,
+    type: Number,
     required: false,
   },
 });
 
-const nome = ref("");
-const email = ref("");
-const telefone = ref("");
-const endereco = ref("");
 
-const newAutomovel = ref(false);
+// Configs
+const nameRouter = "clientes";
+const refId = "id_cliente";
 
+let dataObject = reactive({
+  nome: "",
+  email: "",
+  telefone: "",
+  endereco: ""
+})
+
+
+// Functions
 const editar = () => {
-  router.push({ name: "clientId", params: { idClient: props.id } });
-  const item = store.users.filter((u) => u.id_cliente === props.id)[0];
-  nome.value = item.name;
-  email.value = item.email;
-  telefone.value = item.email;
-  endereco.value = item.email;
-  dialog.value = true;
-};
-
-const actionUser = () => {
-  if (nome.value !== "" && email.value !== "") {
-    if (!route.params.idUser) {
-      store.addUser({
-        id: null,
-        name: name.value.trim(),
-        email: email.value.trim(),
-        dataNasc: dataNasc.value.trim(),
-      });
-    } else {
-      store.editUser({
-        id: route.params.idUser,
-        name: name.value.trim(),
-        email: email.value.trim(),
-        dataNasc: dataNasc.value.trim(),
-      });
-      router.push({ name: "user" });
+  router.push({ name: `${nameRouter}Id`, params: { id: props.id } });
+  const item = store.list.find((i) => i[refId] === props.id);
+  if (item) {
+    dataObject = {
+      ...dataObject,
+      ...item
     }
-    dialog.value = false;
-    cancelUser();
   }
 };
 
-const cancelUser = () => {
-  nome.value = "";
-  email.value = "";
-  telefone.value = "";
-  endereco.value = "";
+const action = () => {
+  if (valid(dataObject)) {
+    if (!route.params.id) {
+      store.create(dataObject);
+    } else {
+      store.update(dataObject, props.id);
+      router.push({ name: nameRouter });
+    }
+    dialog.value = false;
+    cancel();
+  }
 };
+
+const cancel = () => {
+  for (const key in dataObject) {
+    dataObject[key] = "";
+  }
+};
+
+const close = () => {
+  router.push({ name: nameRouter });
+  dialog.value = false;
+}
+
+const valid = (obj) => {
+  for (const key in obj) {
+    if (typeof obj[key] === "string") {
+      obj[key] = obj[key].trim();
+    }
+    if (!obj[key]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 const rule = ref([
   (value) => {
@@ -78,7 +92,7 @@ const rule = ref([
   <v-dialog
     v-model="dialog"
     persistent
-    full-width
+    max-width="500"
     transition="dialog-bottom-transition"
   >
     <template v-slot:activator="{ props: activatorProps }">
@@ -90,7 +104,7 @@ const rule = ref([
         color="#da9c01"
         @click="dialog = true"
         variant="tonal"
-        style="z-index: 101"
+        style="z-index: 150"
       ></v-btn>
       <v-btn
         v-else
@@ -113,10 +127,7 @@ const rule = ref([
             class="text-none rounded-lg"
             icon="mdi-close"
             color="red"
-            @click="
-              router.push({ name: 'clientes' });
-              dialog = false;
-            "
+            @click="close"
             variant="text"
             density="comfortable"
             size="35"
@@ -124,43 +135,41 @@ const rule = ref([
         </v-col>
         <v-form @submit.prevent>
           <v-row dense>
-            <v-col cols="8">
               <!-- Dados do Cliente -->
               <v-col cols="12">
                 <v-text-field
                   placeholder="Nome *"
-                  v-model="nome"
+                  v-model="dataObject.nome"
                   :rules="rule"
                   density="comfortable"
                   single-line
+                  class="mb-2"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12">
                 <v-text-field
                   placeholder="Email *"
-                  v-model="email"
+                  v-model="dataObject.email"
                   :rules="rule"
                   density="comfortable"
                   single-line
+                  class="mb-2"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12">
                 <v-text-field
                   placeholder="Telefone *"
-                  v-model="email"
+                  v-model="dataObject.telefone"
                   :rules="rule"
                   density="comfortable"
                   single-line
+                  class="mb-2"
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12">
                 <v-textarea
                   placeholder="Endereço *"
-                  v-model="email"
+                  v-model="dataObject.endereco"
                   :rules="rule"
                   density="comfortable"
                   single-line
                   no-resize
+                  rows="2"
+                  class="mb-2"
                 ></v-textarea>
               </v-col>
 
@@ -169,60 +178,13 @@ const rule = ref([
                 <v-spacer></v-spacer>
                 <v-btn
                   class="text-none"
-                  :text="route.params.idUser ? 'Salvar' : 'Cadastrar'"
+                  :text="route.params.id ? 'Salvar' : 'Cadastrar'"
                   color="#da9c01"
-                  @click="actionUser"
+                  @click="action"
                   type="submit"
                   variant="tonal"
                 ></v-btn>
               </v-col>
-            </v-col>
-            <v-divider vertical></v-divider>
-
-            <!-- Dados do Veículo -->
-            <v-col cols="4">
-              <v-col cols="12" class="py-0">
-                <v-switch
-                  label="Cadastrar Automóvel"
-                  false-icon="mdi-close"
-                  true-icon="mdi-car"
-                  v-model="newAutomovel"
-                  inset
-                  color="#da9c01"
-                  hide-details
-                ></v-switch>
-              </v-col>
-              <v-col cols="12" v-if="newAutomovel">
-                <v-text-field
-                  placeholder="Marca *"
-                  :rules="rule"
-                  density="comfortable"
-                  single-line
-                  class="mb-2"
-                ></v-text-field>
-                <v-text-field
-                  placeholder="Modelo *"
-                  :rules="rule"
-                  density="comfortable"
-                  single-line
-                  class="mb-2"
-                ></v-text-field>
-                <v-text-field
-                  placeholder="Ano *"
-                  :rules="rule"
-                  density="comfortable"
-                  single-line
-                  class="mb-2"
-                ></v-text-field>
-                <v-text-field
-                  placeholder="Placa *"
-                  :rules="rule"
-                  density="comfortable"
-                  single-line
-                  class="mb-2"
-                ></v-text-field>
-              </v-col>
-            </v-col>
           </v-row>
         </v-form>
       </v-card-text>

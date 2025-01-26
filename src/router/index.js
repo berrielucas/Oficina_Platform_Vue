@@ -52,9 +52,9 @@ const router = createRouter({
               component: () => import("../views/ClienteView.vue"),
             },
             {
-              path: ":idClient",
-              name: "clientId",
-              component: () => import("../components/FormCliente.vue"),
+              path: ":id",
+              name: "clientesId",
+              component: () => import("../views/ClienteView.vue"),
             },
           ],
         },
