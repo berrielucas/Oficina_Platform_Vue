@@ -11,6 +11,9 @@ const storeCliente = useClientStore();
 import { useAutomovelStore } from "@/stores/automovel";
 const storeAutomovel = useAutomovelStore();
 
+import { useServicoStore } from "@/stores/servico";
+const storeServico = useServicoStore();
+
 const router = useRouter();
 
 onBeforeMount(() => {
@@ -22,6 +25,7 @@ onBeforeMount(() => {
 onMounted(() => {
   storeCliente.findAll();
   storeAutomovel.findAll();
+  storeServico.findAll();
 })
 
 /**
