@@ -14,6 +14,9 @@ const storeAutomovel = useAutomovelStore();
 import { useServicoStore } from "@/stores/servico";
 const storeServico = useServicoStore();
 
+import { useOrdemStore } from "@/stores/ordens";
+const storeOrdem = useOrdemStore();
+
 const router = useRouter();
 
 onBeforeMount(() => {
@@ -26,6 +29,7 @@ onMounted(() => {
   storeCliente.findAll();
   storeAutomovel.findAll();
   storeServico.findAll();
+  storeOrdem.findAll();
 })
 
 /**
@@ -171,7 +175,11 @@ const groupOpened = ref(["MAIN", "CAD"]);
     </v-app-bar>
 
     <v-main>
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <v-slide-x-transition mode="out-in">
+          <component :is="Component" />
+        </v-slide-x-transition>
+      </RouterView>
     </v-main>
   </v-app>
 </template>
